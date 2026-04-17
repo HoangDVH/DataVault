@@ -23,7 +23,7 @@ export default function SearchBox({ keyword, onChange }: Props) {
           </svg>
         </div>
         <input
-          placeholder="Search users by name, email, or role..."
+          placeholder="Search users by name..."
           value={keyword}
           onChange={(e) => onChange(e.target.value)}
           className="w-full pl-9 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-500 focus:ring-0 transition-all duration-200 text-sm placeholder-slate-400"

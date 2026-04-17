@@ -20,7 +20,7 @@ const DataItem = memo(
         className="mx-2 my-2 px-4 py-4 rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group"
       >
         <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-sm">
+          <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-sm">
             {item.name.charAt(0).toUpperCase()}
           </div>
 

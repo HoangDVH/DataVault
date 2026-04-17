@@ -1,6 +1,8 @@
+// ================= DATABASE =================
 let database = [];
 let lowercaseIndex = [];
 
+// init data (100K ban đầu)
 function generateData() {
   database = Array.from({ length: 100000 }, (_, i) => ({
     id: i,
@@ -12,18 +14,34 @@ function generateData() {
 
 generateData();
 
+// ================= WORKER =================
 self.onmessage = (e) => {
   const { id, type, payload } = e.data;
 
   try {
+    // ================= RESET =================
+    if (type === "RESET") {
+      database = [];
+      lowercaseIndex = [];
+
+      self.postMessage({
+        id,
+        type: "DONE",
+      });
+      return;
+    }
+
+    // ================= SEARCH =================
     if (type === "SEARCH") {
       const { keyword, minId, maxId, sortOrder, page, limit } = payload;
+
       const keywordLower = keyword.toLowerCase();
 
       let filtered = [];
 
       if (keywordLower) {
         const useIndexSearch = keywordLower.length >= 2;
+
         if (useIndexSearch) {
           filtered = database.filter((item, idx) => {
             return (
@@ -46,39 +64,52 @@ self.onmessage = (e) => {
         );
       }
 
+      // sort
       filtered.sort((a, b) =>
         sortOrder === "asc" ? a.id - b.id : b.id - a.id,
       );
 
+      // pagination
       const start = (page - 1) * limit;
+      const result = filtered.slice(start, start + limit);
 
       self.postMessage({
         id,
         type: "RESULT",
-        data: filtered.slice(start, start + limit),
+        data: result,
+        total: filtered.length,
       });
+
+      return;
     }
 
+    // ================= GET STATS =================
     if (type === "GET_STATS") {
       self.postMessage({
         id,
         type: "RESULT",
         totalRecords: database.length,
       });
+      return;
     }
 
+    // ================= BULK INSERT =================
     if (type === "BULK_INSERT") {
       const { chunk, chunkId } = payload;
 
       let index = 0;
-      const size = 1000;
+      const size = 1000; // insert từng batch để tránh lag
 
       function run() {
         const part = chunk.slice(index, index + size);
+
+        // insert
         database.push(...part);
-        lowercaseIndex.push(...part.map((item) => item.name.toLowerCase()));
+        lowercaseIndex.push(...part.map((i) => i.name.toLowerCase()));
+
         index += size;
 
+        // progress
         self.postMessage({
           type: "PROGRESS",
           chunkId,
@@ -86,13 +117,18 @@ self.onmessage = (e) => {
         });
 
         if (index < chunk.length) {
-          setTimeout(run, 10);
+          // tránh block UI
+          setTimeout(run, 5);
         } else {
-          self.postMessage({ id, type: "DONE" });
+          self.postMessage({
+            id,
+            type: "DONE",
+          });
         }
       }
 
       run();
+      return;
     }
   } catch (err) {
     self.postMessage({

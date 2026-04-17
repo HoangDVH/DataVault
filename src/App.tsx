@@ -234,30 +234,12 @@ export default function App() {
 
     currentToastId.current = toast.loading("Starting...");
 
-    const roles = ["Admin", "Editor", "Viewer", "Analyst"];
-    const statuses = ["Active", "Pending", "Blocked"];
-    const regions = ["New York", "London", "Berlin", "Tokyo", "Sydney"];
+    const startId = totalRecords; // 🔥 lấy từ Stats hiện tại
 
-    const bigData = Array.from({ length: 50000 }, (_, i) => {
-      const name = `Bulk User ${i}`;
-      const email = `user${Date.now() + i}@example.com`;
-      const role = roles[i % roles.length];
-      const status = statuses[i % statuses.length];
-      const location = regions[i % regions.length];
-      const createdAt = new Date(Date.now() - (i % 365) * 86400000)
-        .toISOString()
-        .slice(0, 10);
-
-      return {
-        id: Date.now() + i,
-        name,
-        email,
-        role,
-        status,
-        location,
-        createdAt,
-      };
-    });
+    const bigData = Array.from({ length: 50000 }, (_, i) => ({
+      id: startId + i,
+      name: "User " + (startId + i),
+    }));
 
     const chunkSize = 10000;
     const chunks = [];
