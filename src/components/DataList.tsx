@@ -40,36 +40,34 @@ const DataItem = memo(
 DataItem.displayName = "DataItem";
 
 export default function DataList({ data }: { data: any[] }) {
-  if (!data.length) {
-    return (
-      <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-8 text-center">
-        <div className="text-4xl mb-4">🔍</div>
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">
-          No data found
-        </h3>
-        <p className="text-sm text-slate-500">
-          Try adjusting your search criteria or add some data first
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden">
       <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
         <h3 className="text-base font-semibold text-slate-800">Data Records</h3>
         <p className="text-xs text-slate-500">{data.length} records found</p>
       </div>
-      <List
-        height={420}
-        itemCount={data.length}
-        itemSize={60}
-        width="100%"
-        itemData={data}
-        overscanCount={5}
-      >
-        {DataItem}
-      </List>
+      {data.length ? (
+        <List
+          height={420}
+          itemCount={data.length}
+          itemSize={60}
+          width="100%"
+          itemData={data}
+          overscanCount={5}
+        >
+          {DataItem}
+        </List>
+      ) : (
+        <div className="h-105 flex flex-col items-center justify-center text-center px-8">
+          <div className="text-4xl mb-4">🔍</div>
+          <h3 className="text-lg font-semibold text-slate-800 mb-2">
+            No data found
+          </h3>
+          <p className="text-sm text-slate-500">
+            Try adjusting your search criteria or add some data first
+          </p>
+        </div>
+      )}
 
       {data.length > 1000 && (
         <div className="px-4 py-2 bg-blue-50 border-t border-blue-100">
