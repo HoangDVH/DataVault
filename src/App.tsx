@@ -302,15 +302,6 @@ export default function App() {
       )}
 
       <div className="flex-1 p-4 md:p-6 md:ml-0 min-h-screen">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent mb-1">
-            Dashboard
-          </h1>
-          <p className="text-sm text-slate-600">
-            Manage your data vault efficiently
-          </p>
-        </div>
-
         <div className="max-w-4xl mx-auto space-y-4">
           <Stats totalRecords={totalRecords} latency={latency} />
 
@@ -348,14 +339,16 @@ export default function App() {
             onNext={() => setPage((p) => p + 1)}
           />
 
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="ml-3 text-slate-600">Searching...</span>
-            </div>
-          )}
+          <div className="h-[60px] flex items-center justify-center">
+            {loading && (
+              <div className="animate-spin h-6 w-6 border-b-2 border-blue-600"></div>
+            )}
+          </div>
 
-          <DataList data={data} />
+          {/* 🔥 FIX: tránh layout shift */}
+          <div className="min-h-[420px]">
+            <DataList data={data} />
+          </div>
         </div>
       </div>
     </div>
